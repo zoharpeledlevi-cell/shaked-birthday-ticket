@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ff8fc7">
+  <title></title>
+
+  <!-- ===== התצוגה המקדימה של הקישור בוואטסאפ =====
+       זה המקום היחיד עם טקסט מחוץ ל-content.js, כי וואטסאפ קורא רק את הקובץ הזה.
+       ⚠️ אחרי ההעלאה ל-GitHub: מחליפים את USERNAME בשם המשתמש שלך (הסבר ב-README) -->
+  <meta property="og:title" content="💌 שקודי, יש לך הזמנה סודית!">
+  <meta property="og:description" content="פתחי רק אם את מוכנה להפתעה... 🤫">
+  <meta property="og:image" content="https://USERNAME.github.io/shaked-birthday/preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- בלונים ולבבות מרחפים ברקע -->
+  <div id="floaters" class="floaters" aria-hidden="true"></div>
+
+  <main id="app">
+
+    <!-- מסך פתיחה -->
+    <section class="screen" id="screen-welcome">
+      <!-- מעטפה שנפתחת -->
+      <div class="envelope-wrap">
+        <div class="envelope" id="envelope">
+          <div class="env-back"></div>
+          <div class="env-letter"><span data-t="welcome.letterText"></span></div>
+          <div class="env-pocket"></div>
+          <div class="env-flap"></div>
+          <div class="env-seal" data-t="welcome.seal"></div>
+        </div>
+      </div>
+      <h1 class="title rainbow" data-t="welcome.title"></h1>
+      <p class="text" data-t="welcome.text"></p>
+    </section>
+
+    <!-- השאלה: כן / לא -->
+    <section class="screen" id="screen-question">
+      <!-- דף המכתב: המכתב מהמעטפה מתרחב ונהיה הדף הזה -->
+      <div class="letter-card" id="letter-card">
+        <h1 class="title" data-t="question.title"></h1>
+        <p class="text" data-t="question.text"></p>
+        <div class="yes-no" id="yes-no">
+          <button class="btn btn-primary btn-yes" id="btn-yes" data-t="question.yesButton"></button>
+          <button class="btn btn-no" id="btn-no"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- אחרי "כן" -->
+    <section class="screen" id="screen-yay">
+      <div class="big-emoji spin-pop" data-t="yay.emoji"></div>
+      <h1 class="title rainbow" data-t="yay.title"></h1>
+      <p class="text" data-t="yay.text"></p>
+      <button class="btn btn-primary bounce" id="btn-start" data-t="yay.button"></button>
+    </section>
+
+    <!-- שלב: מה עושים -->
+    <section class="screen step" id="screen-activity">
+      <div class="step-top">
+        <button class="btn-back" data-t="common.backButton"></button>
+        <span class="progress" role="img"></span>
+      </div>
+      <h2 class="title" data-t="activity.title"></h2>
+      <p class="text" data-t="activity.subtitle"></p>
+      <div class="cards" data-cards="activity"></div>
+    </section>
+
+    <!-- שלב: מה אוכלים -->
+    <section class="screen step" id="screen-food">
+      <div class="step-top">
+        <button class="btn-back" data-t="common.backButton"></button>
+        <span class="progress" role="img"></span>
+      </div>
+      <h2 class="title" data-t="food.title"></h2>
+      <p class="text" data-t="food.subtitle"></p>
+      <div class="cards" data-cards="food"></div>
+    </section>
+
+    <!-- שלב: תאריך -->
+    <section class="screen step" id="screen-date">
+      <div class="step-top">
+        <button class="btn-back" data-t="common.backButton"></button>
+        <span class="progress" role="img"></span>
+      </div>
+      <h2 class="title" data-t="date.title"></h2>
+      <p class="text" data-t="date.subtitle"></p>
+      <div class="calendar">
+        <div class="cal-title" id="cal-title"></div>
+        <div class="cal-grid" id="cal-head"></div>
+        <div class="cal-grid" id="cal-days"></div>
+      </div>
+      <button class="btn btn-primary" id="btn-date-next" disabled data-t="date.nextButton"></button>
+    </section>
+
+    <!-- שלב: חלק ביום -->
+    <section class="screen step" id="screen-time">
+      <div class="step-top">
+        <button class="btn-back" data-t="common.backButton"></button>
+        <span class="progress" role="img"></span>
+      </div>
+      <h2 class="title" data-t="timeOfDay.title"></h2>
+      <p class="text" data-t="timeOfDay.subtitle"></p>
+      <div class="parts" id="parts"></div>
+      <button class="btn btn-primary" id="btn-time-next" disabled data-t="timeOfDay.nextButton"></button>
+    </section>
+
+    <!-- סיכום: כרטיס כניסה -->
+    <section class="screen" id="screen-summary">
+      <h2 class="title" data-t="summary.title"></h2>
+      <p class="text" data-t="summary.text"></p>
+
+      <!-- זה האזור שנשמר כתמונה -->
+      <div class="ticket-capture" id="ticket-capture">
+        <div class="ticket">
+          <div class="perf-edge perf-top"></div>
+          <div class="ticket-main">
+            <div class="ticket-label" data-t="summary.ticketLabel"></div>
+            <div class="ticket-title" data-t="summary.ticketTitle"></div>
+            <div class="ticket-sub" data-t="summary.ticketSubtitle"></div>
+            <div class="ticket-rows" id="ticket-rows"></div>
+          </div>
+          <div class="ticket-tear">
+            <span class="notch notch-right"></span>
+            <span class="notch notch-left"></span>
+          </div>
+          <div class="ticket-stub">
+            <div class="stub-text" data-t="summary.stubText"></div>
+            <div class="barcode" id="barcode"></div>
+            <div class="stub-number" data-t="summary.ticketNumber"></div>
+          </div>
+          <div class="perf-edge perf-bottom"></div>
+        </div>
+      </div>
+
+      <div class="summary-actions">
+        <button class="btn btn-primary bounce" id="btn-save" data-t="summary.saveButton"></button>
+        <button class="btn btn-whatsapp" id="btn-whatsapp" data-t="summary.whatsappButton"></button>
+        <button class="btn btn-secondary" id="btn-restart" data-t="summary.restartButton"></button>
+      </div>
+      <p class="save-msg" id="save-msg" aria-live="polite"></p>
+    </section>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="content.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
