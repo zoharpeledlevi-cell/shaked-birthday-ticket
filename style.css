@@ -401,6 +401,7 @@ body::before {
 
 .btn-no {
   --s: 1;
+  touch-action: none;
   font-size: calc(1.05rem * var(--s));
   padding: .7em 1.3em;
   color: var(--fuchsia-dark);
@@ -519,7 +520,19 @@ body::before {
   transition: transform .65s cubic-bezier(.4, 1.5, .5, 1);
 }
 
-.card.flipped .card-inner { transform: rotateY(180deg); }
+.card.flipped .card-inner,
+.card.peek .card-inner { transform: rotateY(180deg); }
+
+/* הצד הקדמי (עם ה-?) נעלם לגמרי באמצע ההיפוך, כדי שלא "ידלוף" ויהבהב
+   מעל הצד הגלוי – קורה בטלפונים, בעיקר באייפון */
+.face-front {
+  transform: rotateY(0deg);
+  transition: visibility 0s linear .3s;
+}
+.card.flipped .face-front,
+.card.peek .face-front { visibility: hidden; }
+.card.flipped .front-symbol,
+.card.peek .front-symbol { animation: none; }
 
 .card:not(.flipped):active .card-inner { transform: scale(.94); }
 
@@ -597,10 +610,6 @@ body::before {
 .card.chosen:not(:active) { transform: scale(1.05); }
 
 .cards.has-choice .card:not(.chosen) { opacity: .55; }
-
-/* אחרי הבחירה – שאר הקלפים מתהפכים כדי להראות מה היה שם */
-.card.peek .card-inner { transform: rotateY(180deg); }
-.card.peek .face-back { filter: grayscale(.5); }
 .cards .card { transition: opacity .3s; }
 
 /* ---------- לוח שנה ---------- */

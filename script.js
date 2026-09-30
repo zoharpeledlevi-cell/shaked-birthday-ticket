@@ -146,6 +146,8 @@
   const yesBtn = $("#btn-yes");
   const yesNoBox = $("#yes-no");
   let noIndex = 0;
+  let lastNoPress = 0; // מתי נלחץ ה"לא" בפעם האחרונה
+  let lastNoTouch = 0; // מתי נגעו ב"לא" באצבע בפעם האחרונה
 
   function resetNoButton() {
     noIndex = 0;
@@ -290,17 +292,29 @@
 
   function setupQuestion() {
     resetNoButton();
-    // pointerdown תופס גם עכבר וגם מגע באצבע
-    if (window.PointerEvent) {
-      noBtn.addEventListener("pointerdown", onNoPress);
-    } else {
-      noBtn.addEventListener("touchstart", onNoPress, { passive: false });
-      noBtn.addEventListener("mousedown", onNoPress);
-    }
+    // בטלפון: touchstart עם preventDefault מבטל את ה"קליק" שהטלפון שולח אחרי הנגיעה.
+    // בלי זה, הקליק נוחת על מה שנמצא מתחת לאצבע אחרי שה"לא" ברח – כלומר על ה"כן".
+    noBtn.addEventListener(
+      "touchstart",
+      (e) => {
+        lastNoPress = lastNoTouch = Date.now();
+        onNoPress(e);
+      },
+      { passive: false }
+    );
+    // במחשב: עכבר (מגע כבר טופל למעלה, אז מתעלמים מאירועי עכבר שהטלפון מייצר אחרי נגיעה)
+    const mouseDown = (e) => {
+      if (e.pointerType === "touch" || Date.now() - lastNoTouch < 800) return;
+      lastNoPress = Date.now();
+      onNoPress(e);
+    };
+    noBtn.addEventListener(window.PointerEvent ? "pointerdown" : "mousedown", mouseDown);
     noBtn.addEventListener("click", (e) => e.preventDefault());
     noBtn.addEventListener("contextmenu", (e) => e.preventDefault());
 
     yesBtn.addEventListener("click", () => {
+      // הגנה כפולה: "כן" לא מגיב ממש רגע אחרי נגיעה ב"לא"
+      if (Date.now() - lastNoPress < 600) return;
       bigConfetti();
       show("yay");
     });
